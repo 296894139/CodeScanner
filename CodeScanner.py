@@ -11,6 +11,7 @@ class CodeScanner():
             "save":0,
             "monitor":0
         }
+        self.otherMethods=[]
     def pylint(self):
         from pylint.lint import Run
         Run([self.filepath])
@@ -45,13 +46,23 @@ class CodeScanner():
             lines=f.readlines()
             funs=self.extractFuns()
             for fun in funs:
+
                 begin=fun[0]
+                other=True
                 for method in self.methodsContained:
-                    if(method in lines[begin]):
+                    if(method in lines[begin].split("(")[0]):
+                        other=False
                         self.methodsContained[method]=1
+                        break
+
+                if(other):
+                    line=lines[begin]
+                    self.otherMethods.append(line.replace("def","").strip()[:-1])
+
 c=CodeScanner("kmeans.py")
+c.pylint()
 c.memberMethodsCheck()
 print(c.methodsContained)
-
+print(c.otherMethods)
 
 
