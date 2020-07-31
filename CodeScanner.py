@@ -74,6 +74,7 @@ class CodeScanner():
                     self.otherMethods.append(line.replace("def","").strip()[:-1])
 
     def memberPropertyCheck(self):
+        #check all the properties in py file
         with open(self.filepath,'r') as f:
             lines=f.readlines()
             funs=self._extractFuns()
