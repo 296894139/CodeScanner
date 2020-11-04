@@ -1,7 +1,15 @@
 import os
 class CodeScanner():
     def __init__(self,rootpath):
-        self.filepath=rootpath
+        with open(os.path.join(rootpath,"Anylearn_tools.py")) as f:
+            lines=f.readlines()
+            for line in lines:
+                if "import" in line:
+                    line=line.replace(" ","").strip()
+                    line=line.replace("from"," ").replace("import"," ")
+                    self.filepath = os.path.join(rootpath,line.split(" ")[-2],line.split(" ")[-1]+".py")
+                    break
+
         #os.path.join(rootpath,"Anylearn_tools.py")
         self.methodsContained={
             "__init__(self)":0,
@@ -127,7 +135,7 @@ class CodeScanner():
         self.parserGet()
         return legal,self.train_params_list,self.eval_params_list
 
-c=CodeScanner("SSD/ssd/ssd.py")
+c=CodeScanner("SSD")
 #c.memberMethodsCheck()
 #c.memberPropertyCheck()
 #c.pylint()
