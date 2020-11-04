@@ -1,8 +1,8 @@
+import os
 class CodeScanner():
-    def __init__(self,filepath):
-
-        self.filepath=filepath
-
+    def __init__(self,rootpath):
+        self.filepath=rootpath
+        #os.path.join(rootpath,"Anylearn_tools.py")
         self.methodsContained={
             "__init__(self)":0,
             "__construct(self,**build_args_kw)":0,
@@ -13,7 +13,8 @@ class CodeScanner():
             "save(self,path,construct_args)":0,
             "monitor(self)":0
         }
-
+        self.train_params_list=[]
+        self.eval_params_list=[]
         self.propertiesContained={
             "train_parser":0,
             "eval_parser":0
@@ -22,6 +23,31 @@ class CodeScanner():
         # methods not included in our design file
         self.otherMethods=[]
 
+    def parserGet(self):
+        #check all the methods in py file
+        with open(self.filepath,'r') as f:
+            lines=f.readlines()
+            for line in lines:
+                if "self.train_parser.add_argument" in line:
+                    line=line.split("(")[1].replace(")","")
+                    params=line.split(",")
+                    tem={}
+                    tem["name"]=params[0].replace("-","").replace("'","").replace('\"',"").replace("\n","")
+                    for i in range(1,len(params)):
+                        key=params[i].split("=")[0]
+                        val=params[i].split("=")[1].replace("'","").replace('\"',"").replace("\n","")
+                        tem[key]= val
+                    self.train_params_list.append(tem)
+                elif "self.eval_parser.add_argument" in line:
+                    line = line.split("(")[1].replace(")", "")
+                    params = line.split(",")
+                    tem = {}
+                    tem["name"] = params[0].replace("-", "").replace("'", "").replace('\"', "").replace("\n", "")
+                    for i in range(1, len(params)):
+                        key = params[i].split("=")[0]
+                        val = params[i].split("=")[1].replace("'", "").replace('\"', "").replace("\n", "")
+                        tem[key] = val
+                    self.eval_params_list.append(tem)
     def pylint(self):
         # rate the code
         from pylint.lint import Run
@@ -88,13 +114,29 @@ class CodeScanner():
                         if("eval_parser" in lines[i]):
                             self.propertiesContained["eval_parser"]=1
 
-c=CodeScanner("test.py")
-c.memberMethodsCheck()
-c.memberPropertyCheck()
-c.pylint()
+    def main(self):
+        legal=True
+        self.memberMethodsCheck()
+        self.memberPropertyCheck()
+        for t in self.methodsContained.values():
+            if(t!=1):
+                legal=False
+        for t in self.propertiesContained.values():
+            if (t != 1):
+                legal = False
+        self.parserGet()
+        return legal,self.train_params_list,self.eval_params_list
 
-print(c.methodsContained)
-print(c.otherMethods)
-print(c.propertiesContained)
+c=CodeScanner("SSD/ssd/ssd.py")
+#c.memberMethodsCheck()
+#c.memberPropertyCheck()
+#c.pylint()
 
+#print(c.methodsContained)
+#print(c.otherMethods)
+#print(c.propertiesContained)
+#c.parserGet()
+#print(c.eval_params_list)
+#print(c.train_params_list)
+print(c.main())
 
