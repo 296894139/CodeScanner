@@ -1,4 +1,5 @@
 import os
+import yaml
 class CodeScanner():
     def __init__(self,rootpath):
         with open(os.path.join(rootpath,"Anylearn_tools.py")) as f:
@@ -37,7 +38,9 @@ class CodeScanner():
             lines=f.readlines()
             for line in lines:
                 if "self.train_parser.add_argument" in line:
-                    line=line.split("(")[1].replace(")","")
+                    line=line.strip()
+                    line=line[1:-1]
+                    #line=line.split("(")[1].replace(")","")
                     params=line.split(",")
                     tem={}
                     tem["name"]=params[0].replace("-","").replace("'","").replace('\"',"").replace("\n","")
@@ -135,7 +138,7 @@ class CodeScanner():
         self.parserGet()
         return legal,self.train_params_list,self.eval_params_list
 
-c=CodeScanner("SSD")
+
 #c.memberMethodsCheck()
 #c.memberPropertyCheck()
 #c.pylint()
@@ -146,5 +149,24 @@ c=CodeScanner("SSD")
 #c.parserGet()
 #print(c.eval_params_list)
 #print(c.train_params_list)
+c=CodeScanner("D:\workspace\XLearn-Algorithm-Source\SSD")
 print(c.main())
+#print(line)
+#params=line.split("=")
+
+'''if(len(params)>0):
+  print(params)
+  val=params[-1]
+  tem={}
+  for t in len(params)-1:
+      ind=params[t].index(",")
+      key=params[t][ind+1:]
+      tem[key]=val
+      val=params[t][:ind]
+  key=params[-1]
+  tem[key]=val'''
+
+
+
+#print(line)
 
