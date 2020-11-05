@@ -1,5 +1,6 @@
 import os
 import yaml
+import re
 class CodeScanner():
     def __init__(self,rootpath):
         with open(os.path.join(rootpath,"Anylearn_tools.py")) as f:
@@ -46,7 +47,7 @@ class CodeScanner():
                     tem["name"]=params[0].replace("-","").replace("'","").replace('\"',"").replace("\n","")
                     for i in range(1,len(params)):
                         key=params[i].split("=")[0]
-                        val=params[i].split("=")[1].replace("'","").replace('\"',"").replace("\n","")
+                        val=params[i].split("=")[1].replace("\n","")
                         tem[key]= val
                     self.train_params_list.append(tem)
                 elif "self.eval_parser.add_argument" in line:
@@ -56,7 +57,7 @@ class CodeScanner():
                     tem["name"] = params[0].replace("-", "").replace("'", "").replace('\"', "").replace("\n", "")
                     for i in range(1, len(params)):
                         key = params[i].split("=")[0]
-                        val = params[i].split("=")[1].replace("'", "").replace('\"', "").replace("\n", "")
+                        val = params[i].split("=")[1].replace("\n", "")
                         tem[key] = val
                     self.eval_params_list.append(tem)
     def pylint(self):
@@ -149,8 +150,8 @@ class CodeScanner():
 #c.parserGet()
 #print(c.eval_params_list)
 #print(c.train_params_list)
-c=CodeScanner("D:\workspace\XLearn-Algorithm-Source\SSD")
-print(c.main())
+'''c=CodeScanner("D:\workspace\XLearn-Algorithm-Source\SSD")
+print(c.main())'''
 #print(line)
 #params=line.split("=")
 
@@ -167,6 +168,15 @@ print(c.main())
   tem[key]=val'''
 
 
-
-#print(line)
-
+'''def parsecomma(dataString):
+    comma = dataString.find(",")
+    colon = dataString.find("=")
+    if comma == -1:
+        retDict = {}
+        retDict[dataString[:colon]] = dataString[colon + 1:]
+        return retDict
+    else:
+        retDict = parsecomma(dataString[comma + 1:])
+        retDict[dataString[:colon]] = dataString[colon + 1:comma]
+        return retDict
+print(parsecomma(" nargs='+', type='', default=[640, 640], help='[train, test] image sizes'"))'''
