@@ -1,17 +1,17 @@
-import os
-import yaml
-import re
+import argparse
+import json
+
 class CodeScanner():
     def __init__(self,rootpath):
-        with open(os.path.join(rootpath,"Anylearn_tools.py")) as f:
+        '''with open(os.path.join(rootpath,"Anylearn_tools.py")) as f:
             lines=f.readlines()
             for line in lines:
                 if "import" in line:
                     line=line.replace(" ","").strip()
                     line=line.replace("from"," ").replace("import"," ")
                     self.filepath = os.path.join(rootpath,line.split(" ")[-2],line.split(" ")[-1]+".py")
-                    break
-
+                    break'''
+        self.args=['nargs','type','default','help','required','option','metavar','action','description','str','int','True','False','const','float']
         #os.path.join(rootpath,"Anylearn_tools.py")
         self.methodsContained={
             "__init__(self)":0,
@@ -39,31 +39,60 @@ class CodeScanner():
             lines=f.readlines()
             for line in lines:
                 if "self.train_parser.add_argument" in line:
-                    line=line.strip()
-                    line=line[1:-1]
-                    #line=line.split("(")[1].replace(")","")
-                    params=line.split(",")
+                    line=line.lstrip()
+                    line=line[line.index("(")+1:]
+                    line=line[:line.rindex(")")]
+                    b = line.index(',')
+                    name=line[:b]
+                    s = line[b + 1:]
+
+                    s = "{" + s + "}"
+                    s = s.replace("=", ":")
+                    s = s.replace("'", "\"")
+
+                    for arg in self.args:
+                        s = s.replace(" "+arg, " \"" + arg + "\"")
+                        s=s.replace(":"+arg,":\"" + arg + "\"")
+
+                    tem=json.loads(s)
+                    tem['name']=name
+
+                    '''params=line.split(",")
                     tem={}
                     tem["name"]=params[0].replace("-","").replace("'","").replace('\"',"").replace("\n","")
                     for i in range(1,len(params)):
                         key=params[i].split("=")[0]
                         val=params[i].split("=")[1].replace("\n","")
-                        tem[key]= val
+                        tem[key]= val'''
                     self.train_params_list.append(tem)
                 elif "self.eval_parser.add_argument" in line:
-                    line = line.split("(")[1].replace(")", "")
+                    '''line = line.split("(")[1].replace(")", "")
                     params = line.split(",")
                     tem = {}
                     tem["name"] = params[0].replace("-", "").replace("'", "").replace('\"', "").replace("\n", "")
                     for i in range(1, len(params)):
                         key = params[i].split("=")[0]
                         val = params[i].split("=")[1].replace("\n", "")
-                        tem[key] = val
+                        tem[key] = val'''
+                    line = line.lstrip()
+                    line = line[line.index("(") + 1:]
+                    line = line[:line.rindex(")")]
+                    b = line.index(',')
+                    name = line[:b]
+                    s = line[b + 1:]
+
+                    s = "{" + s + "}"
+                    s = s.replace("=", ":")
+                    s = s.replace("'", "\"")
+
+                    for arg in self.args:
+                        s = s.replace(" " + arg, " \"" + arg + "\"")
+                        s = s.replace(":" + arg, ":\"" + arg + "\"")
+                    print(s)
+                    tem = json.loads(s)
+                    tem['name'] = name
+                    print(tem)
                     self.eval_params_list.append(tem)
-    def pylint(self):
-        # rate the code
-        from pylint.lint import Run
-        Run([self.filepath],do_exit=False)
     def _extractFuns(self):
         # extract all functions from the file,return the start and end line of a function
         with open(self.filepath,'r') as f:
@@ -139,44 +168,28 @@ class CodeScanner():
         self.parserGet()
         return legal,self.train_params_list,self.eval_params_list
 
-
+c=CodeScanner("")
+c.filepath="yolo.py"
+c.parserGet()
 #c.memberMethodsCheck()
 #c.memberPropertyCheck()
 #c.pylint()
-
+s1="'--img_size', nargs='+', type='int', default=[640, 640], help='[train, test] image sizes'"
+s2="'--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu'"
+args=['nargs','type','default','help','required','option','metavar','action','description']
+s3="'--adam', action='store_true', help='use torch.optim.Adam() optimizer'"
+def go(s):
+    b=s.index(',')
+    s=s[b+1:]
+    s="{"+s+"}"
+    s=s.replace("=",":")
+    s=s.replace("'","\"")
+    for arg in args:
+        s = s.replace(" " + arg, " \"" + arg + "\"")
+        s = s.replace(":" + arg, ":\"" + arg + "\"")
+    print(json.loads(s))
 #print(c.methodsContained)
 #print(c.otherMethods)
 #print(c.propertiesContained)
 #c.parserGet()
 #print(c.eval_params_list)
-#print(c.train_params_list)
-'''c=CodeScanner("D:\workspace\XLearn-Algorithm-Source\SSD")
-print(c.main())'''
-#print(line)
-#params=line.split("=")
-
-'''if(len(params)>0):
-  print(params)
-  val=params[-1]
-  tem={}
-  for t in len(params)-1:
-      ind=params[t].index(",")
-      key=params[t][ind+1:]
-      tem[key]=val
-      val=params[t][:ind]
-  key=params[-1]
-  tem[key]=val'''
-
-
-'''def parsecomma(dataString):
-    comma = dataString.find(",")
-    colon = dataString.find("=")
-    if comma == -1:
-        retDict = {}
-        retDict[dataString[:colon]] = dataString[colon + 1:]
-        return retDict
-    else:
-        retDict = parsecomma(dataString[comma + 1:])
-        retDict[dataString[:colon]] = dataString[colon + 1:comma]
-        return retDict
-print(parsecomma(" nargs='+', type='', default=[640, 640], help='[train, test] image sizes'"))'''
