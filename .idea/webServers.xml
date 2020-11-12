@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="6238fee5-8be8-4cf8-af0c-ecfd77842d01" name="192.168.6.111:22">
+        <fileTransfer rootFolder="/workspace/xujiehui" accessType="SFTP" host="192.168.6.111" port="22" sshConfigId="10621175-3d41-43e2-976f-a188b4325d51" sshConfig="xujiehui@192.168.6.111:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="e5ed6b9e-96d9-4912-b5b8-d5d581603e18" name="192.168.10.22">
+        <fileTransfer rootFolder="/home/xlearn/new_images" accessType="SFTP" host="192.168.10.22" port="22" sshConfigId="74b92af4-5537-48a2-af18-3ad69f0eb53d" sshConfig="xlearn@192.168.10.22:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

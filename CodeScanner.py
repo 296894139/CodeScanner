@@ -1,16 +1,15 @@
-import argparse
 import json
-
+import os
 class CodeScanner():
     def __init__(self,rootpath):
-        '''with open(os.path.join(rootpath,"Anylearn_tools.py")) as f:
+        with open(os.path.join(rootpath,"Anylearn_tools.py")) as f:
             lines=f.readlines()
             for line in lines:
                 if "import" in line:
                     line=line.replace(" ","").strip()
                     line=line.replace("from"," ").replace("import"," ")
                     self.filepath = os.path.join(rootpath,line.split(" ")[-2],line.split(" ")[-1]+".py")
-                    break'''
+                    break
         self.args=['nargs','type','default','help','required','option','metavar','action','description','str','int','True','False','const','float']
         #os.path.join(rootpath,"Anylearn_tools.py")
         self.methodsContained={
@@ -88,10 +87,8 @@ class CodeScanner():
                     for arg in self.args:
                         s = s.replace(" " + arg, " \"" + arg + "\"")
                         s = s.replace(":" + arg, ":\"" + arg + "\"")
-                    print(s)
                     tem = json.loads(s)
                     tem['name'] = name
-                    print(tem)
                     self.eval_params_list.append(tem)
     def _extractFuns(self):
         # extract all functions from the file,return the start and end line of a function
@@ -168,13 +165,12 @@ class CodeScanner():
         self.parserGet()
         return legal,self.train_params_list,self.eval_params_list
 
-c=CodeScanner("")
-c.filepath="yolo.py"
-c.parserGet()
+c=CodeScanner("D:\workspace\XLearn-Algorithm-Source\yolov5")
+print(c.main())
 #c.memberMethodsCheck()
 #c.memberPropertyCheck()
 #c.pylint()
-s1="'--img_size', nargs='+', type='int', default=[640, 640], help='[train, test] image sizes'"
+'''s1="'--img_size', nargs='+', type='int', default=[640, 640], help='[train, test] image sizes'"
 s2="'--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu'"
 args=['nargs','type','default','help','required','option','metavar','action','description']
 s3="'--adam', action='store_true', help='use torch.optim.Adam() optimizer'"
@@ -187,7 +183,7 @@ def go(s):
     for arg in args:
         s = s.replace(" " + arg, " \"" + arg + "\"")
         s = s.replace(":" + arg, ":\"" + arg + "\"")
-    print(json.loads(s))
+    print(json.loads(s))'''
 #print(c.methodsContained)
 #print(c.otherMethods)
 #print(c.propertiesContained)
